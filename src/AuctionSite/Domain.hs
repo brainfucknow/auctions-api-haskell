@@ -1,18 +1,8 @@
--- | Public API for the auction domain.
+-- | Curated public API for the auction domain.
 --
--- This module is a thin /facade/: it curates and re-exports the subset of the
--- @AuctionSite.Domain.*@ submodules that callers (the web layer, the test
--- suite) are meant to depend on, and adds the top-level 'Repository' together
--- with the 'handle' command processor.
---
--- The dependency direction is strictly one-way and acyclic:
---
--- > Core  <-  Bids  <-  States  <-  {SingleSealedBid, TimedAscending}  <-  Auctions  <-  Commands  <-  Domain (this module)
---
--- Submodules never import this facade, so importing @AuctionSite.Domain@
--- introduces no import cycle. To keep the re-exported surface intentional
--- rather than wholesale, every submodule below is imported with an explicit
--- import list naming exactly what this facade exposes or uses internally.
+-- A thin facade that re-exports the part of the @AuctionSite.Domain.*@
+-- submodules used by callers, plus the top-level 'Repository' and 'handle'.
+-- Submodules never import this module, so the dependency graph stays acyclic.
 module AuctionSite.Domain (
   -- * Auctions
   AuctionType (..),
