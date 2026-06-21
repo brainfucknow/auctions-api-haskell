@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric, OverloadedStrings     #-}
+{-# LANGUAGE OverloadedStrings #-}
 module AuctionSite.Domain.TimedAscending where
 import AuctionSite.Money ( AmountValue )
 import AuctionSite.Domain.Core

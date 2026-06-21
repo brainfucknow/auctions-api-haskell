@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings #-}
 module AuctionSite.Web.Types where
 import           Data.Aeson
 import           GHC.Generics

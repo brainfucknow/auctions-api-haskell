@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric, OverloadedStrings  #-}
+{-# LANGUAGE OverloadedStrings #-}
 module AuctionSite.Domain.Core where
 import AuctionSite.Money
 import GHC.Generics
