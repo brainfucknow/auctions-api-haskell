@@ -1,7 +1,7 @@
 name:                auction-site
 version:             0.1.0.0
--- synopsis:
--- description:
+synopsis:            A Haskell-based auction API server
+description:         An auction website API with various auction types (English, Vickrey, etc.) built with Spock and Haskell
 homepage:            https://github.com/wallymathieu/auction-site-haskell
 license:             MIT
 license-file:        LICENSE
