@@ -1,35 +1,50 @@
+-- | Public API for the auction domain.
+--
+-- This module is a thin /facade/: it curates and re-exports the subset of the
+-- @AuctionSite.Domain.*@ submodules that callers (the web layer, the test
+-- suite) are meant to depend on, and adds the top-level 'Repository' together
+-- with the 'handle' command processor.
+--
+-- The dependency direction is strictly one-way and acyclic:
+--
+-- > Core  <-  Bids  <-  States  <-  {SingleSealedBid, TimedAscending}  <-  Auctions  <-  Commands  <-  Domain (this module)
+--
+-- Submodules never import this facade, so importing @AuctionSite.Domain@
+-- introduces no import cycle. To keep the re-exported surface intentional
+-- rather than wholesale, every submodule below is imported with an explicit
+-- import list naming exactly what this facade exposes or uses internally.
 module AuctionSite.Domain (
-  -- auctions
+  -- * Auctions
   AuctionType (..),
   Auction (..),
+  AuctionState,
   emptyState,
   validateBid,
-  AuctionState,
-  -- bids
+  -- * Bids
   Bid (..),
-  -- core
+  -- * Core types
   Errors (..),
   UserId,
   AuctionId,
   User (..),
   userId,
-  -- state
+  -- * Auction state
   State (..),
-  Repository,
-  -- commands
+  -- * Commands and events
   Command (..),
   Event (..),
-  -- domain
+  -- * Repository
+  Repository,
   auctions,
   handle
 ) where
 import qualified Data.Map as Map
 import qualified Data.List as List
-import AuctionSite.Domain.Core
-import AuctionSite.Domain.Auctions
-import AuctionSite.Domain.Bids
-import AuctionSite.Domain.Commands
-import AuctionSite.Domain.States
+import AuctionSite.Domain.Core (Errors (..), UserId, AuctionId, User (..), userId)
+import AuctionSite.Domain.Auctions (AuctionType (..), Auction (..), AuctionState, emptyState, validateBid)
+import AuctionSite.Domain.Bids (Bid (..))
+import AuctionSite.Domain.Commands (Command (..), Event (..))
+import AuctionSite.Domain.States (State (..))
 
 type Repository = Map.Map AuctionId (Auction, AuctionState)
 
