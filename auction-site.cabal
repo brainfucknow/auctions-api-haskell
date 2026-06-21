@@ -30,7 +30,7 @@ library
                       , AuctionSite.Web.App
                       , AuctionSite.Web.Jwt
                       , AuctionSite.Worker
-  ghc-options:        -Wall -fwarn-tabs
+  ghc-options:        -Wall -Werror -fwarn-tabs
   other-modules:
   build-depends:       base
                       , containers
@@ -59,7 +59,7 @@ test-suite auction-site-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
-  ghc-options:        -Wall -fwarn-tabs -Wno-missing-signatures -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:        -Wall -Werror -fwarn-tabs -Wno-missing-signatures -threaded -rtsopts -with-rtsopts=-N
   build-depends:        base
                       , auction-site
                       , hspec
