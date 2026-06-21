@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric,OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings #-}
 module AuctionSite.Money (
   Currency(..),
   Amount(..),

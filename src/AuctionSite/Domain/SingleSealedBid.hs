@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveGeneric     #-}
 module AuctionSite.Domain.SingleSealedBid where
 import           AuctionSite.Domain.Core
 import qualified AuctionSite.Domain.States as S

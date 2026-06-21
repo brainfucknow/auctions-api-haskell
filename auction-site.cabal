@@ -1,3 +1,4 @@
+cabal-version:       2.4
 name:                auction-site
 version:             0.1.0.0
 -- synopsis:
@@ -11,7 +12,6 @@ copyright:           2017 Oskar Gewalli
 category:            Web
 build-type:          Simple
 extra-source-files:  README.md
-cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
@@ -45,7 +45,7 @@ library
                       , stm
                       , async
                       , directory
-  default-language:    Haskell2010
+  default-language:    GHC2021
 
 executable auction-site-exe
   hs-source-dirs:      app
@@ -61,7 +61,7 @@ executable auction-site-exe
                       , stm
                       , async
                       , text
-  default-language:    Haskell2010
+  default-language:    GHC2021
 
 test-suite auction-site-test
   type:                exitcode-stdio-1.0
@@ -91,7 +91,7 @@ test-suite auction-site-test
                       , ApiSerializationSpec
                       , ApiSpec
                       , SerializationSpec
-  default-language:    Haskell2010
+  default-language:    GHC2021
 
 source-repository head
   type:     git
