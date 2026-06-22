@@ -11,7 +11,7 @@ import Data.Time
 import Data.Aeson
 import Text.Read (readMaybe)
 import Control.Applicative ((<|>))
-import AuctionSite.Aeson (toJsonOfShow, ofJsonOfRead)
+import qualified Data.Text as T
 
 data AuctionType=
   {- also known as an open ascending price auction
@@ -52,9 +52,16 @@ emptyState Auction{ typ=SingleSealedBid opt, expiry=expiry' } = Left (SB.emptySt
 emptyState Auction{ typ=TimedAscending opt, expiry=expiry', startsAt=startsAt' } = Right (TA.emptyState startsAt' expiry' opt)
 
 instance ToJSON AuctionType where
-  toJSON = toJsonOfShow
+  toJSON (TimedAscending opt)  = object ["type" .= ("TimedAscending"  :: T.Text), "options" .= opt]
+  toJSON (SingleSealedBid opt) = object ["type" .= ("SingleSealedBid" :: T.Text), "options" .= opt]
+
 instance FromJSON AuctionType where
-  parseJSON = ofJsonOfRead "AuctionType"
+  parseJSON = withObject "AuctionType" $ \o -> do
+    typ' <- o .: "type"
+    case (typ' :: T.Text) of
+      "TimedAscending"  -> TimedAscending  <$> o .: "options"
+      "SingleSealedBid" -> SingleSealedBid <$> o .: "options"
+      _                 -> fail $ "Unknown AuctionType: " ++ T.unpack typ'
 
 instance ToJSON Auction where
   toJSON Auction { auctionId=auctionId', startsAt=startsAt', title=title', expiry=expiry', seller=seller', typ=typ', auctionCurrency=auctionCurrency' } =

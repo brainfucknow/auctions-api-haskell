@@ -11,11 +11,12 @@ import           Control.Concurrent
 import           Control.Concurrent.STM
 import           Control.Concurrent.Async
 import           Control.Monad (forever)
-
-eventsFile = "tmp/events.jsonl"
+import           System.Environment (lookupEnv)
+import           Data.Maybe (fromMaybe)
 
 main :: IO ()
 main = do
+    eventsFile <- fromMaybe "tmp/events.jsonl" <$> lookupEnv "EVENTS_FILE"
     eventQueue <- atomically $ newTBQueue 1000
     worker <- startEventWorker (writeEvents eventsFile) eventQueue
     onEvent <- createEventHandler eventQueue

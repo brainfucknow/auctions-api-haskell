@@ -29,19 +29,19 @@ spec () = do
       cmds `shouldNotBe` Nothing
     it "can deserialize type" $
       let
-        json    = "\"English|0|0|0\""
+        json    = "{\"type\":\"TimedAscending\",\"options\":{\"reservePrice\":0,\"minRaise\":0,\"timeFrame\":0}}"
         decoded = decode $ BS.pack json :: Maybe AuctionType
       in
         decoded `shouldBe` Just timedAscending
     it "read add auction" $
       let
-        json    = "{\"$type\":\"AddAuction\",\"at\":\"2020-05-17T08:15:16.464Z\",\"auction\":{\"id\":1,\"startsAt\":\"2018-12-01T10:00:00.000Z\",\"title\":\"Some auction\",\"expiry\":\"2020-05-18T10:00:00.000Z\",\"user\":\"BuyerOrSeller|a1|Test\",\"type\":\"English|0|0|0\",\"currency\":\"VAC\"}}"
+        json    = "{\"$type\":\"AddAuction\",\"at\":\"2020-05-17T08:15:16.464Z\",\"auction\":{\"id\":1,\"startsAt\":\"2018-12-01T10:00:00.000Z\",\"title\":\"Some auction\",\"expiry\":\"2020-05-18T10:00:00.000Z\",\"user\":{\"type\":\"BuyerOrSeller\",\"id\":\"a1\",\"name\":\"Test\"},\"type\":{\"type\":\"TimedAscending\",\"options\":{\"reservePrice\":0,\"minRaise\":0,\"timeFrame\":0}},\"currency\":\"VAC\"}}"
         decoded = decode $ BS.pack json :: Maybe C.Command
       in
         decoded `shouldNotBe` Nothing
     it "read place bid" $
       let
-        json    = "{\"$type\":\"PlaceBid\",\"at\":\"2020-05-17T08:15:22.948Z\",\"bid\":{\"id\":\"32e692cc3fdb451da9647d6eeca5b2e3\",\"auction\":1,\"user\":\"BuyerOrSeller|a2|Buyer\",\"amount\":11,\"at\":\"2020-05-17T08:15:22.940Z\"}}"
+        json    = "{\"$type\":\"PlaceBid\",\"at\":\"2020-05-17T08:15:22.948Z\",\"bid\":{\"id\":\"32e692cc3fdb451da9647d6eeca5b2e3\",\"auction\":1,\"user\":{\"type\":\"BuyerOrSeller\",\"id\":\"a2\",\"name\":\"Buyer\"},\"amount\":11,\"at\":\"2020-05-17T08:15:22.940Z\"}}"
         decoded = decode $ BS.pack json :: Maybe C.Command
       in
         decoded `shouldNotBe` Nothing
@@ -70,13 +70,13 @@ spec () = do
     it "can serialize add auction" $
       let
         encoded = toJSON addAuction
-        expected = decode "{\"$type\":\"AddAuction\",\"at\":\"2016-01-01T08:28:00.607875Z\",\"auction\":{\"expiry\":\"2016-02-01T08:28:00.607875Z\",\"startsAt\":\"2016-01-01T08:28:00.607875Z\",\"user\":\"BuyerOrSeller|Sample_Seller|Seller\",\"currency\":\"SEK\",\"id\":1,\"title\":\"auction\",\"type\":\"Vickrey\"}}"
+        expected = decode "{\"$type\":\"AddAuction\",\"at\":\"2016-01-01T08:28:00.607875Z\",\"auction\":{\"expiry\":\"2016-02-01T08:28:00.607875Z\",\"startsAt\":\"2016-01-01T08:28:00.607875Z\",\"user\":{\"type\":\"BuyerOrSeller\",\"id\":\"Sample_Seller\",\"name\":\"Seller\"},\"currency\":\"SEK\",\"id\":1,\"title\":\"auction\",\"type\":{\"type\":\"SingleSealedBid\",\"options\":\"Vickrey\"}}}"
       in
         Just encoded `shouldBe` expected
     it "can serialize place bid" $
       let
         encoded = toJSON bid
-        json = decode "{\"$type\":\"PlaceBid\",\"at\":\"2016-02-01T07:28:00.607875Z\",\"bid\":{\"amount\":10,\"at\":\"2016-01-01T08:28:00.607875000001Z\",\"auction\":1,\"user\":\"BuyerOrSeller|Buyer_1|Buyer 1\"}}"
+        json = decode "{\"$type\":\"PlaceBid\",\"at\":\"2016-02-01T07:28:00.607875Z\",\"bid\":{\"amount\":10,\"at\":\"2016-01-01T08:28:00.607875000001Z\",\"auction\":1,\"user\":{\"type\":\"BuyerOrSeller\",\"id\":\"Buyer_1\",\"name\":\"Buyer 1\"}}}"
       in
         Just encoded `shouldBe` json
   describe "read and write json" $ do

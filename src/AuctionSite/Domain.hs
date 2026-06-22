@@ -45,6 +45,8 @@ handle state repository =
       failureOf $ AuctionAlreadyExists aId
     else if expiry auction <= time then
       failureOf $ AuctionHasEnded aId
+    else if startsAt auction >= expiry auction then
+      failureOf $ InvalidAuctionDates aId
     else
       let empty = emptyState auction
           nextRepository= Map.insert aId (auction, empty) repository

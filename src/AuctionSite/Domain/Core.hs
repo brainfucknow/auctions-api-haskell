@@ -4,7 +4,6 @@ import AuctionSite.Money
 import GHC.Generics
 import Data.Aeson
 import qualified Data.Text as T
-import Text.Printf (printf)
 import Data.Aeson.Types (Parser)
 import qualified Data.Aeson.Types as ATyp
 
@@ -18,15 +17,16 @@ userId (BuyerOrSeller userId' _) = userId'
 userId (Support userId') = userId'
 
 instance ToJSON User where
-  toJSON (BuyerOrSeller userId' name) = String $ T.pack ( printf "BuyerOrSeller|%s|%s" userId' name )
-  toJSON (Support userId') = String $ T.pack ( printf "Support|%s" userId' )
+  toJSON (BuyerOrSeller uid name) = object ["type" .= ("BuyerOrSeller" :: T.Text), "id" .= uid, "name" .= name]
+  toJSON (Support uid)            = object ["type" .= ("Support" :: T.Text), "id" .= uid]
+
 instance FromJSON User where
-  parseJSON = withText "User" (interpret . T.splitOn "|")
-    where
-      interpret :: [T.Text] -> Parser User
-      interpret ["BuyerOrSeller", userId', name'] = pure $ BuyerOrSeller userId' name'
-      interpret ["Support", userId'] = pure $ Support userId'
-      interpret _ = ATyp.prependFailure "parsing User failed, " (fail "could not interpret values")
+  parseJSON = withObject "User" $ \o -> do
+    typ' <- o .: "type"
+    case (typ' :: T.Text) of
+      "BuyerOrSeller" -> BuyerOrSeller <$> o .: "id" <*> o .: "name"
+      "Support"       -> Support <$> o .: "id"
+      _               -> ATyp.prependFailure "parsing User failed, " (fail $ "unknown type: " ++ T.unpack typ')
 
 type AuctionId = Integer
 
@@ -39,6 +39,7 @@ data Errors =
   | InvalidUserData String
   | MustPlaceBidOverHighestBid AmountValue
   | AlreadyPlacedBid
+  | InvalidAuctionDates AuctionId
   deriving (Eq,Show)
 
 instance ToJSON Errors where
@@ -50,3 +51,4 @@ instance ToJSON Errors where
   toJSON (InvalidUserData u)            = object ["type" .= String "InvalidUserData", "user" .= u]
   toJSON (MustPlaceBidOverHighestBid a) = object ["type" .= String "MustPlaceBidOverHighestBid", "amount" .= a]
   toJSON AlreadyPlacedBid               = object ["type" .= String "AlreadyPlacedBid"]
+  toJSON (InvalidAuctionDates a)        = object ["type" .= String "InvalidAuctionDates", "auctionId" .= a]

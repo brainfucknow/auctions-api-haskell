@@ -44,12 +44,10 @@ amountCurrency (Amount c _) = c
 amountValue :: Amount -> AmountValue
 amountValue (Amount _ v) = v
 
-(+) :: Amount -> Amount -> Amount
-(+) (Amount ac av) (Amount bc bv) =
-  if ac == bc then
-    Amount ac (av P.+ bv)
-  else
-    error "Cant add two amounts with different currency"
+(+) :: Amount -> Amount -> Maybe Amount
+(+) (Amount ac av) (Amount bc bv)
+  | ac == bc  = Just (Amount ac (av P.+ bv))
+  | otherwise = Nothing
 
 
 instance ToJSON Currency where

@@ -1,8 +1,8 @@
 cabal-version:       2.4
 name:                auction-site
 version:             0.1.0.0
--- synopsis:
--- description:
+synopsis:            Haskell auction REST API
+description:         Event-sourced auction engine with multiple auction types
 homepage:            https://github.com/wallymathieu/auction-site-haskell
 license:             MIT
 license-file:        LICENSE
@@ -50,17 +50,14 @@ library
 executable auction-site-exe
   hs-source-dirs:      app
   main-is:             Main.hs
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:        base
                       , containers
                       , Spock
-                      , http-types
                       , auction-site
-                      , aeson
                       , time
                       , stm
                       , async
-                      , text
   default-language:    GHC2021
 
 test-suite auction-site-test

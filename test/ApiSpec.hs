@@ -6,6 +6,7 @@ import           AuctionSite.Domain.Commands (Event)
 import           Web.Spock (spockAsApp, spock)
 import           Web.Spock.Config
 import           Data.Aeson
+import qualified Data.Text as T
 import           Data.Vector ( singleton, fromList )
 import           Data.ByteString (ByteString)
 import qualified Data.ByteString.Lazy as LB
@@ -69,7 +70,7 @@ spec = do
       , "title"       .= String "Ending Soon"
       , "expiry"      .= String "2018-07-15T00:00:00Z"
       , "currency"    .= String "VAC"
-      , "bids"        .= array [object ["amount" .= Number 42, "bidder" .= String "BuyerOrSeller|a2|Buyer"]]
+      , "bids"        .= array [object ["amount" .= Number 42, "bidder" .= object ["type" .= ("BuyerOrSeller" :: T.Text), "id" .= ("a2" :: T.Text), "name" .= ("Buyer" :: T.Text)]]]
       , "winner"      .= String "a2"
       , "winnerPrice" .= Number 42
       ]
@@ -77,7 +78,7 @@ spec = do
     endedAuctionReqJson = "{\"id\":1,\"startsAt\":\"2017-01-01T10:00:00.000Z\",\"endsAt\":\"2018-01-01T10:00:00.000Z\",\"title\":\"Ended auction\", \"currency\":\"VAC\" }"
     auctionJson = [ "currency" .= String "VAC", "expiry" .= String "2019-01-01T10:00:00Z", "id".= Number 1, "startsAt".= String "2018-01-01T10:00:00Z", "title".= String "First auction"]
     auctionWithBidJsonValue = object $ auctionJson ++ ["bids" .= array [
-      object  ["amount" .= Number 11, "bidder" .= String "BuyerOrSeller|a2|Buyer"] ], "winner".=Null,"winnerPrice".=Null ]
+      object  ["amount" .= Number 11, "bidder" .= object ["type" .= ("BuyerOrSeller" :: T.Text), "id" .= ("a2" :: T.Text), "name" .= ("Buyer" :: T.Text)]] ], "winner".=Null,"winnerPrice".=Null ]
     auctionWithoutBidJsonValue = object $ auctionJson ++ ["bids" .= array [], "winner".=Null,"winnerPrice".=Null ]
     auctionWithoutBidListJsonValue :: Value
     auctionWithoutBidListJsonValue = singletonArray $ object auctionJson
@@ -88,8 +89,8 @@ spec = do
                                         "startsAt" .= String "2018-01-01T10:00:00Z",
                                         "title" .= String "First auction",
                                         "expiry" .= String "2019-01-01T10:00:00Z",
-                                        "user" .= String "BuyerOrSeller|a1|Test",
-                                        "type" .= String "English|0|0|0",
+                                        "user" .= object ["type" .= ("BuyerOrSeller" :: T.Text), "id" .= ("a1" :: T.Text), "name" .= ("Test" :: T.Text)],
+                                        "type" .= object ["type" .= ("TimedAscending" :: T.Text), "options" .= object ["reservePrice" .= Number 0, "minRaise" .= Number 0, "timeFrame" .= Number 0]],
                                         "currency" .= String "VAC" ] ]
     bidAcceptedJsonValue :: Value
     bidAcceptedJsonValue = object [
@@ -97,7 +98,7 @@ spec = do
         "at" .= String "2018-08-04T00:00:00Z",
         "bid" .= object [
             "auction" .= Number 1,
-            "user" .= String "BuyerOrSeller|a2|Buyer",
+            "user" .= object ["type" .= ("BuyerOrSeller" :: T.Text), "id" .= ("a2" :: T.Text), "name" .= ("Buyer" :: T.Text)],
             "amount" .= Number 11,
             "at" .= String "2018-08-04T00:00:00Z" ] ]
     addAuctionOk = postWithHeader "/auctions" [(xJwtPayload, seller1)] firstAuctionReqJson `shouldRespondWith` fromValue auctionAddedJsonValue

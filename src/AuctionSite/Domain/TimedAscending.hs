@@ -7,7 +7,6 @@ import AuctionSite.Domain.Bids
 import qualified Data.Aeson as A
 import Text.Printf (printf)
 import qualified Data.Text as T
-import AuctionSite.Aeson
 import Data.Ratio (numerator)
 import Data.Time (NominalDiffTime, UTCTime, nominalDiffTimeToSeconds, addUTCTime, secondsToNominalDiffTime)
 import GHC.Generics (Generic)
@@ -132,7 +131,18 @@ instance S.State State where
     _ -> False
 
 instance A.ToJSON Options where
-  toJSON = toJsonOfShow
+  toJSON Options{reservePrice=rp, minRaise=mr, timeFrame=tf} =
+    A.object [ "reservePrice" A..= rp
+             , "minRaise"     A..= mr
+             , "timeFrame"    A..= (round (nominalDiffTimeToSeconds tf) :: Integer)
+             ]
 
 instance A.FromJSON Options where
-  parseJSON = ofJsonOfRead "TimedAscendingOptions"
+  parseJSON = A.withObject "TimedAscendingOptions" $ \o -> do
+    rp <- o A..: "reservePrice"
+    mr <- o A..: "minRaise"
+    tf <- o A..: "timeFrame"
+    return Options { reservePrice = rp
+                   , minRaise     = mr
+                   , timeFrame    = fromInteger tf
+                   }
